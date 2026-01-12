@@ -4,10 +4,20 @@ import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
 
-// Initialize OpenAI client
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'dummy-key', // User needs to provide this
+    apiKey: process.env.OPENAI_API_KEY || 'dummy-key',
 });
+
+// Configure CORS
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*', // Allow all domains (including Framer)
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+    return NextResponse.json({}, { headers: corsHeaders });
+}
 
 export async function POST(req: Request) {
     try {
@@ -49,12 +59,12 @@ export async function POST(req: Request) {
 
         const reply = completion.choices[0].message;
 
-        return NextResponse.json(reply);
+        return NextResponse.json(reply, { headers: corsHeaders });
     } catch (error) {
         console.error('Chat API Error:', error);
         return NextResponse.json(
             { error: 'Internal Server Error' },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
         );
     }
 }
