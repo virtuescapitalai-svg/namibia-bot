@@ -4,12 +4,13 @@ import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
 
 const STYLES = `
-  #sn-widget-root {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 9999;
+  #sn-widget-container {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 2147483647 !important; /* Max z-index to stay on top */
     font-family: 'Inter', sans-serif;
+    isolation: isolate; /* Create new stacking context */
   }
   .sn-launcher {
     width: 60px;
@@ -121,113 +122,115 @@ const STYLES = `
 type Message = { role: 'user' | 'assistant'; content: string };
 
 const ChatWidget = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        { role: 'assistant', content: 'Welcome to Secret Namibia. How can I assist you with your journey today?' }
-    ]);
-    const [input, setInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: 'Welcome to Secret Namibia. How can I assist you with your journey today?' }
+  ]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
-    const handleSubmit = async (e?: React.FormEvent) => {
-        e?.preventDefault();
-        if (!input.trim() || isLoading) return;
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!input.trim() || isLoading) return;
 
-        const userMsg = input.trim();
-        setInput('');
-        setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
-        setIsLoading(true);
+    const userMsg = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setIsLoading(true);
 
-        try {
-            // In production, this URL needs to be absolute
-            // For local dev, we assume we are running on localhost:3000
-            // We will inject the API_BASE via the build script or assume /api/chat if same origin
-            const apiUrl = (window as any).SN_API_URL || 'http://localhost:3000/api/chat';
+    try {
+      const apiUrl = (window as any).SN_API_URL || 'http://localhost:3000/api/chat';
 
-            const res = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [...messages, { role: 'user', content: userMsg }] }),
-            });
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [...messages, { role: 'user', content: userMsg }] }),
+      });
 
-            const data = await res.json();
-            setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
-        } catch (err) {
-            setMessages(prev => [...prev, { role: 'assistant', content: "I'm having trouble connecting to the concierge service. Please try again later." }]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      const data = await res.json();
+      setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role: 'assistant', content: "I'm having trouble connecting to the concierge service. Please try again later." }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    return (
-        <>
-            <style>{STYLES}</style>
-            <div className="sn-launcher" onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-            </div>
+  return (
+    <>
+      <style>{STYLES}</style>
+      <div className="sn-launcher" onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
+      </div>
 
-            {isOpen && (
-                <div className="sn-window">
-                    <div className="sn-header">
-                        <span>Secret Namibia Concierge</span>
-                        <X size={18} style={{ cursor: 'pointer' }} onClick={() => setIsOpen(false)} />
-                    </div>
-                    <div className="sn-messages">
-                        {messages.map((m, i) => (
-                            <div key={i} className={`sn-message ${m.role}`}>
-                                {m.content}
-                            </div>
-                        ))}
-                        {isLoading && (
-                            <div className="sn-message assistant">
-                                <Loader2 className="animate-spin" size={16} />
-                            </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
-                    <form className="sn-input-area" onSubmit={handleSubmit}>
-                        <input
-                            className="sn-input"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Ask about safaris..."
-                        />
-                        <button className="sn-send-btn" type="submit" disabled={isLoading}>
-                            <Send size={16} />
-                        </button>
-                    </form>
-                </div>
+      {isOpen && (
+        <div className="sn-window">
+          <div className="sn-header">
+            <span>Secret Namibia Concierge</span>
+            <X size={18} style={{ cursor: 'pointer' }} onClick={() => setIsOpen(false)} />
+          </div>
+          <div className="sn-messages">
+            {messages.map((m, i) => (
+              <div key={i} className={`sn-message ${m.role}`}>
+                {m.content}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="sn-message assistant">
+                <Loader2 className="animate-spin" size={16} />
+              </div>
             )}
-        </>
-    );
+            <div ref={messagesEndRef} />
+          </div>
+          <form className="sn-input-area" onSubmit={handleSubmit}>
+            <input
+              className="sn-input"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about safaris..."
+            />
+            <button className="sn-send-btn" type="submit" disabled={isLoading}>
+              <Send size={16} />
+            </button>
+          </form>
+        </div>
+      )}
+    </>
+  );
 };
 
 // Mount function
-export function mount(elementId: string, options: any = {}) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
+export function mount(options: any = {}) {
+  // Check if widget is already mounted
+  if (document.getElementById('sn-widget-container')) return;
 
-    // Set global options
-    if (options.apiUrl) {
-        (window as any).SN_API_URL = options.apiUrl;
-    }
+  const el = document.createElement('div');
+  el.id = 'sn-widget-container';
+  document.body.appendChild(el);
 
-    const root = createRoot(el);
-    root.render(<ChatWidget />);
+  // Set global options if provided
+  if (options.apiUrl) {
+    (window as any).SN_API_URL = options.apiUrl;
+  }
+
+  const root = createRoot(el);
+  root.render(<ChatWidget />);
 }
 
-// Auto-mount if a default div exists
+// Auto-mount
 if (typeof window !== 'undefined') {
-    const defaultRoot = document.getElementById('secret-namibia-chat-root');
-    if (defaultRoot) {
-        mount('secret-namibia-chat-root');
-    }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    mount();
+  } else {
+    document.addEventListener('DOMContentLoaded', () => mount());
+  }
 }
