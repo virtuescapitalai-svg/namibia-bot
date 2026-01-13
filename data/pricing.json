@@ -1,0 +1,14 @@
+{
+  "Classic Safari": {
+    "count": 107,
+    "avgPrice": 14661,
+    "min": 700,
+    "max": 79421
+  },
+  "Family": {
+    "count": 1,
+    "avgPrice": 4611,
+    "min": 4611,
+    "max": 4611
+  }
+}

@@ -156,6 +156,36 @@ const STYLES = `
     color: #aaa;
     cursor: not-allowed;
   }
+  /* Contact Form Styles */
+  .sn-contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .sn-contact-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+  .sn-contact-input:focus {
+    border-color: #d4af37;
+  }
+  .sn-contact-btn {
+    background: #d4af37;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .sn-contact-btn:hover {
+    background: #b5952f;
+  }
 `;
 
 type Message = { role: 'user' | 'assistant'; content: string };
@@ -211,6 +241,27 @@ const ChatWidget = () => {
     }
   };
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Optimistic UI
+    setMessages(prev => [...prev, { role: 'assistant', content: "**Thank you.** \n\nA travel specialist will contact you shortly to plan your journey." }]);
+
+    try {
+      const apiUrl = (window as any).SN_API_URL || 'http://localhost:3000';
+      await fetch(`${apiUrl}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch (err) {
+      console.error('Contact error', err);
+    }
+  };
+
   return (
     <>
       <style>{STYLES}</style>
@@ -225,15 +276,44 @@ const ChatWidget = () => {
             <X size={18} style={{ cursor: 'pointer' }} onClick={() => setIsOpen(false)} />
           </div>
           <div className="sn-messages">
-            {messages.map((m, i) => (
-              <div key={i} className={`sn-message ${m.role}`}>
-                {m.role === 'assistant' ? (
-                  <ReactMarkdown>{m.content}</ReactMarkdown>
-                ) : (
-                  m.content
-                )}
-              </div>
-            ))}
+            {messages.map((m, i) => {
+              // Check for Contact Trigger
+              if (m.role === 'assistant' && m.content.includes('[SHOW_CONTACT_FORM]')) {
+                const cleanContent = m.content.replace('[SHOW_CONTACT_FORM]', '').trim();
+                return (
+                  <React.Fragment key={i}>
+                    {cleanContent && (
+                      <div className="sn-message assistant">
+                        <ReactMarkdown>{cleanContent}</ReactMarkdown>
+                      </div>
+                    )}
+                    <div className="sn-message assistant" style={{ background: '#fcfcfc', border: '1px solid #eee' }}>
+                      <div style={{ marginBottom: '8px', fontWeight: 'bold', color: '#d4af37' }}>
+                        Direct Enquiry
+                      </div>
+                      <form className="sn-contact-form" onSubmit={handleContactSubmit}>
+                        <input className="sn-contact-input" name="name" placeholder="Your Name" required />
+                        <input className="sn-contact-input" name="email" type="email" placeholder="Email Address" required />
+                        <input className="sn-contact-input" name="details" placeholder="Any specific requirements?" />
+                        <button className="sn-contact-btn" type="submit">
+                          Request a Specialist
+                        </button>
+                      </form>
+                    </div>
+                  </React.Fragment>
+                );
+              }
+
+              return (
+                <div key={i} className={`sn-message ${m.role}`}>
+                  {m.role === 'assistant' ? (
+                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                  ) : (
+                    m.content
+                  )}
+                </div>
+              );
+            })}
             {isLoading && (
               <div className="sn-message assistant">
                 <Loader2 className="animate-spin" size={16} />
