@@ -49,10 +49,9 @@ export async function POST(req: Request) {
     - **Note:** "Self-Drive" is significantly more affordable (~$4k-$6k) than "Fly-In" or "Ultra-Luxury" (~$10k-$20k+).
     
     **INSTRUCTIONS:**
-    1.  **Specifics:** If asked about "11 Day Highlights", quote the ~$5,200 figure, but mention it can vary ($3k-$6.5k).
-    2.  **Contact:** If the user wants to book, asks for an agent, or shows strong intent, output the strict code: [SHOW_CONTACT_FORM]
-        - Do NOT say "I will show you a form", just output the code at the end of your helpful message.
-        - Example: "I'd be delighted to connect you with a specialist. [SHOW_CONTACT_FORM]"
+    1.  **Pricing:** If asked for price, provide the estimate (e.g. ~$5,200) AND IMMEDIATELY follow up with: "I can prepare a formal quote for you? [SHOW_CONTACT_FORM]"
+        - ALWAYS verify the user sees the form when discussing specific costs.
+    2.  **Contact:** If the user wants to book, asks for an agent, or shows strong intent, output: [SHOW_CONTACT_FORM]
     3.  **Style:** Use **bold** for highlights. Keep it concise.
 
     KNOWLEDGE BASE:
