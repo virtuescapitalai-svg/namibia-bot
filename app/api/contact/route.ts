@@ -23,7 +23,7 @@ export async function POST(req: Request) {
         // Send Email
         const { data, error } = await resend.emails.send({
             from: 'Secret Namibia Concierge <onboarding@resend.dev>', // Use verified domain in prod
-            to: ['bookings@secretnamibia.com'],
+            to: ['virtuescapitalai@gmail.com'],
             subject: `New Safari Enquiry from ${name}`,
             html: `
                 <h1>New Enquiry</h1>
