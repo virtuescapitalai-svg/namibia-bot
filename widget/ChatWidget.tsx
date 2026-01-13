@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
+import ReactMarkdown from 'react-markdown';
 
 const STYLES = `
   #sn-widget-container {
@@ -32,15 +33,17 @@ const STYLES = `
     position: absolute;
     bottom: 80px;
     right: 0;
-    width: 350px;
-    height: 500px;
+    width: 380px; /* Slightly wider */
+    height: 600px; /* Taller */
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    border-radius: 16px; /* More rounded */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     animation: slideUp 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05); /* Subtle border */
+    font-size: 16px; /* Base font size */
   }
   @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -49,72 +52,108 @@ const STYLES = `
   .sn-header {
     background: #1a1a1a;
     color: #d4af37;
-    padding: 16px;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.5px;
   }
   .sn-messages {
     flex: 1;
-    padding: 16px;
+    padding: 20px;
     overflow-y: auto;
-    background: #f9f9f9;
+    background: #f8f8f8; /* Softer background */
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
   }
   .sn-message {
-    max-width: 80%;
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.4;
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 15px; /* Larger font */
+    line-height: 1.6; /* Better readability */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
   .sn-message.user {
     align-self: flex-end;
     background: #1a1a1a;
     color: white;
-    border-bottom-right-radius: 2px;
+    border-bottom-right-radius: 4px;
   }
   .sn-message.assistant {
     align-self: flex-start;
-    background: #e5e5e5;
-    color: #1a1a1a;
-    border-bottom-left-radius: 2px;
+    background: white;
+    color: #333;
+    border-bottom-left-radius: 4px;
+    border: 1px solid #eee;
+  }
+  /* Markdown Styles */
+  .sn-message p {
+    margin: 0 0 8px 0;
+  }
+  .sn-message p:last-child {
+    margin: 0;
+  }
+  .sn-message strong {
+    font-weight: 700;
+    color: inherit;
+  }
+  .sn-message ul, .sn-message ol {
+    margin: 8px 0;
+    padding-left: 20px;
+  }
+  .sn-message li {
+    margin-bottom: 4px;
+  }
+  .sn-message a {
+    color: #d4af37;
+    text-decoration: underline;
   }
   .sn-input-area {
-    padding: 12px;
+    padding: 16px;
     background: white;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #f0f0f0;
     display: flex;
-    gap: 8px;
+    gap: 12px;
+    align-items: center;
   }
   .sn-input {
     flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
+    padding: 12px 16px;
+    background: #f5f5f5;
+    border: 1px solid transparent;
+    border-radius: 24px;
     outline: none;
-    font-size: 14px;
+    font-size: 15px;
+    transition: all 0.2s;
   }
   .sn-input:focus {
+    background: white;
     border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
   }
   .sn-send-btn {
     background: #d4af37;
     color: white;
     border: none;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: background 0.2s;
+  }
+  .sn-send-btn:hover:not(:disabled) {
+    background: #b5952f;
   }
   .sn-send-btn:disabled {
-    background: #ccc;
+    background: #eee;
+    color: #aaa;
     cursor: not-allowed;
   }
 `;
@@ -157,7 +196,14 @@ const ChatWidget = () => {
       });
 
       const data = await res.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+
+      if (data.error) {
+        // Handle specific API errors cleanly
+        setMessages(prev => [...prev, { role: 'assistant', content: "I apologize, but I'm slightly overwhelmed at the moment (Quota Limit). Please contact our team directly for immediate assistance." }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+      }
+
     } catch (err) {
       setMessages(prev => [...prev, { role: 'assistant', content: "I'm having trouble connecting to the concierge service. Please try again later." }]);
     } finally {
@@ -181,7 +227,11 @@ const ChatWidget = () => {
           <div className="sn-messages">
             {messages.map((m, i) => (
               <div key={i} className={`sn-message ${m.role}`}>
-                {m.content}
+                {m.role === 'assistant' ? (
+                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                ) : (
+                  m.content
+                )}
               </div>
             ))}
             {isLoading && (
@@ -199,7 +249,7 @@ const ChatWidget = () => {
               placeholder="Ask about safaris..."
             />
             <button className="sn-send-btn" type="submit" disabled={isLoading}>
-              <Send size={16} />
+              <Send size={18} />
             </button>
           </form>
         </div>
