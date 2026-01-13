@@ -1,0 +1,116 @@
+[
+  {
+    "tour": "10 Day Namibia Safari (Fly-In)",
+    "avg": 13247,
+    "range": "$12134 - $13989",
+    "count": 5
+  },
+  {
+    "tour": "10 Day Namibia Safari (Guided)",
+    "avg": 5225,
+    "range": "$3265 - $6531",
+    "count": 5
+  },
+  {
+    "tour": "11 Day Namibia Safari (Fly-In)",
+    "avg": 16149,
+    "range": "$16149 - $16149",
+    "count": 2
+  },
+  {
+    "tour": "11 Day Namibia Safari (Self-Drive)",
+    "avg": 20137,
+    "range": "$20137 - $20137",
+    "count": 1
+  },
+  {
+    "tour": "12 Day Namibia Safari",
+    "avg": 8254,
+    "range": "$4797 - $14490",
+    "count": 3
+  },
+  {
+    "tour": "12 Day Namibia Safari (Self-Drive)",
+    "avg": 4170,
+    "range": "$4060 - $4335",
+    "count": 5
+  },
+  {
+    "tour": "13 Day Namibia Safari (Fly-In)",
+    "avg": 10292,
+    "range": "$10292 - $10292",
+    "count": 2
+  },
+  {
+    "tour": "14 Day Namibia Safari",
+    "avg": 5247,
+    "range": "$5247 - $5247",
+    "count": 5
+  },
+  {
+    "tour": "14 Day Namibia Safari (Fly-In)",
+    "avg": 11281,
+    "range": "$11281 - $11281",
+    "count": 1
+  },
+  {
+    "tour": "15 Day Namibia Safari",
+    "avg": 11076,
+    "range": "$4879 - $16200",
+    "count": 8
+  },
+  {
+    "tour": "16 Day Namibia Safari",
+    "avg": 8434,
+    "range": "$4993 - $15071",
+    "count": 9
+  },
+  {
+    "tour": "17 Day Namibia Safari",
+    "avg": 12996,
+    "range": "$12996 - $12996",
+    "count": 4
+  },
+  {
+    "tour": "20 Day Namibia Safari",
+    "avg": 17231,
+    "range": "$17231 - $17231",
+    "count": 1
+  },
+  {
+    "tour": "23 Day Namibia Safari",
+    "avg": 13409,
+    "range": "$13409 - $13409",
+    "count": 2
+  },
+  {
+    "tour": "6 Day Namibia Safari (Fly-In)",
+    "avg": 8279,
+    "range": "$7786 - $8772",
+    "count": 2
+  },
+  {
+    "tour": "7 Day Namibia Safari",
+    "avg": 4698,
+    "range": "$4698 - $4698",
+    "count": 2
+  },
+  {
+    "tour": "8 Day Namibia Safari (Fly-In)",
+    "avg": 8270,
+    "range": "$8270 - $8270",
+    "count": 1
+  },
+  {
+    "tour": "9 Day Namibia Safari",
+    "avg": 8339,
+    "range": "$3334 - $14264",
+    "count": 8
+  },
+  {
+    "tour": "Custom Safari",
+    "avg": 10621,
+    "range": "$3568 - $22218",
+    "count": 16
+  }
+]
