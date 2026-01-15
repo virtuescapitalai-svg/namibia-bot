@@ -16,7 +16,7 @@ async function build() {
             js: '// Secret Namibia Chatbot Widget',
         },
     });
-    console.log('Widget built successfully: public/widget.js');
+    console.log('Widget built successfully: public/namibia-widget.js');
 }
 
 build().catch(() => process.exit(1));
