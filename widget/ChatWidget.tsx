@@ -238,7 +238,7 @@ const ChatWidget = () => {
 
       if (data.error) {
         // Handle specific API errors cleanly
-        setMessages(prev => [...prev, { role: 'assistant', content: "I apologize, but I'm slightly overwhelmed at the moment (Quota Limit). Please contact our team directly for immediate assistance." }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: `Configuration Error: ${data.error}. Please check your API Key.` }]);
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
       }

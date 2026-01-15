@@ -23,6 +23,10 @@ export async function POST(req: Request) {
     try {
         const { messages } = await req.json();
 
+        if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'dummy-key') {
+            return NextResponse.json({ error: 'OPENAI_API_KEY is missing in Vercel Environment Variables' }, { status: 500, headers: corsHeaders });
+        }
+
         // Load Knowledge Base
         const dataPath = path.join(process.cwd(), 'data', 'knowledge.json');
         let knowledgeBase = [];
