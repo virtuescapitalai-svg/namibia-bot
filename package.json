@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "tsx scripts/build-widget.ts && next build",
+    "postinstall": "tsx scripts/build-widget.ts",
     "start": "next start",
     "lint": "eslint"
   },
