@@ -194,7 +194,7 @@ type Message = { role: 'user' | 'assistant'; content: string };
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Welcome to Secret Namibia. How can I assist you with your journey today?' }
+    { role: 'assistant', content: 'Welcome to Secret Namibia. How can I assist you today?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
