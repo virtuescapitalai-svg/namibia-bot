@@ -14,10 +14,8 @@ const STYLES = `
     isolation: isolate; /* Create new stacking context */
   }
   .sn-launcher {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
     background: #d4af37; /* Gold */
+    // background: #ff0000; /* DEBUG RED */
     color: white;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     display: flex;
@@ -214,10 +212,18 @@ const ChatWidget = () => {
     const userMsg = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+
+    if (userMsg.toLowerCase() === 'debug_form') {
+      setTimeout(() => {
+        setMessages(prev => [...prev, { role: 'assistant', content: "Debug Mode: Forcing form display. [SHOW_CONTACT_FORM]" }]);
+      }, 500);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const apiUrl = (window as any).SN_API_URL || 'http://localhost:3000/api/chat';
+      const apiUrl = (window as any).SN_API_URL || '/api/chat';
 
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -251,7 +257,7 @@ const ChatWidget = () => {
     setMessages(prev => [...prev, { role: 'assistant', content: "**Thank you.** \n\nA travel specialist will contact you shortly to plan your journey." }]);
 
     try {
-      const apiUrl = (window as any).SN_API_URL || 'http://localhost:3000';
+      const apiUrl = (window as any).SN_API_URL || '';
       await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -292,9 +298,17 @@ const ChatWidget = () => {
                         Direct Enquiry
                       </div>
                       <form className="sn-contact-form" onSubmit={handleContactSubmit}>
-                        <input className="sn-contact-input" name="name" placeholder="Your Name" required />
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input className="sn-contact-input" name="firstName" placeholder="First Name" required style={{ width: '50%' }} />
+                          <input className="sn-contact-input" name="lastName" placeholder="Last Name" required style={{ width: '50%' }} />
+                        </div>
                         <input className="sn-contact-input" name="email" type="email" placeholder="Email Address" required />
-                        <input className="sn-contact-input" name="details" placeholder="Any specific requirements?" />
+                        <textarea
+                          className="sn-contact-input"
+                          name="request"
+                          placeholder="How can we help you?"
+                          style={{ resize: 'none', height: '80px', fontFamily: 'inherit' }}
+                        />
                         <button className="sn-contact-btn" type="submit">
                           Request a Specialist
                         </button>

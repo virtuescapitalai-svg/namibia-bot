@@ -35,3 +35,7 @@ next-env.d.ts
 
 # artifacts
 public/widget.js
+public/namibia-widget.js
+
+# secrets
+.env
