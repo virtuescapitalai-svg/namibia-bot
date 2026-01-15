@@ -22,6 +22,9 @@ const STYLES = `
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     transition: transform 0.2s;
   }
   .sn-launcher:hover {
@@ -223,7 +226,7 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const apiUrl = (window as any).SN_API_URL || '/api/chat';
+      const apiUrl = (window as any).SN_API_URL || 'https://namibia-bot.vercel.app/api/chat';
 
       const res = await fetch(apiUrl, {
         method: 'POST',
@@ -257,7 +260,7 @@ const ChatWidget = () => {
     setMessages(prev => [...prev, { role: 'assistant', content: "**Thank you.** \n\nA travel specialist will contact you shortly to plan your journey." }]);
 
     try {
-      const apiUrl = (window as any).SN_API_URL || '';
+      const apiUrl = (window as any).SN_API_URL || 'https://namibia-bot.vercel.app';
       await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
